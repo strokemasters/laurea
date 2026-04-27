@@ -13,15 +13,44 @@ const client = new Client({
   partials: [Partials.Channel]
 });
 
-// ================== CONFIG SEGURA ==================
+// ================== CONFIG ==================
 const TOKEN = process.env.TOKEN;
 const CARGO_RECLUTA_ID = process.env.CARGO_RECLUTA_ID;
 const CANAL_CADASTRO_ID = process.env.CANAL_CADASTRO_ID;
 const CANAL_REGISTRO_ID = process.env.CANAL_REGISTRO_ID;
-// ====================================================
+// ============================================
 
-client.once(Events.ClientReady, () => {
+client.once(Events.ClientReady, async () => {
   console.log(`✅ Logado como ${client.user.tag}`);
+
+  const canal = client.channels.cache.get(CANAL_CADASTRO_ID);
+  if (!canal) return console.log("❌ Canal de cadastro não encontrado");
+
+  // 🔥 APAGA PAINEL ANTIGO
+  const mensagens = await canal.messages.fetch({ limit: 10 });
+  const antiga = mensagens.find(msg =>
+    msg.author.id === client.user.id &&
+    msg.components.length > 0
+  );
+
+  if (antiga) {
+    await antiga.delete();
+  }
+
+  // ✅ CRIA NOVO PAINEL
+  const embed = new EmbedBuilder()
+    .setTitle("📦 REGISTRO LAUREA 📦")
+    .setDescription("Clique no botão abaixo para se registrar.")
+    .setColor("Green");
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("abrir_registro")
+      .setLabel("Fazer Registro")
+      .setStyle(ButtonStyle.Success)
+  );
+
+  await canal.send({ embeds: [embed], components: [row] });
 });
 
 // BOTÃO + MODAL
@@ -32,7 +61,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       const modal = new ModalBuilder()
         .setCustomId("modal_registro")
-        .setTitle("Registro LAUREA");
+        .setTitle("Registro");
 
       const campos = [
         { id: "nome", label: "NOME COMPLETO" },
@@ -71,14 +100,11 @@ client.on(Events.InteractionCreate, async interaction => {
         const guild = interaction.guild;
         const member = interaction.member;
 
-        // cargo
         const cargo = guild.roles.cache.get(CARGO_RECLUTA_ID);
-        await member.roles.add(cargo);
+        if (cargo) await member.roles.add(cargo);
 
-        // nickname
         await member.setNickname(`#${id}・${nome.toUpperCase()}`);
 
-        // telefone formatado
         let tel = telefone.replace(/\D/g, "");
         if (tel.length >= 9) {
           tel = `(${tel.slice(0,3)}) ${tel.slice(3,6)}-${tel.slice(6,9)}`;
@@ -97,7 +123,9 @@ client.on(Events.InteractionCreate, async interaction => {
 🏷️ VULGO:       ${vulgo}
 \`\`\``;
 
-        await canal.send({ content: mensagem });
+        if (canal) {
+          await canal.send({ content: mensagem });
+        }
 
         await interaction.reply({
           content: "✅ Registro concluído!",
@@ -116,25 +144,6 @@ client.on(Events.InteractionCreate, async interaction => {
       }
     }
   }
-});
-
-// PAINEL
-client.once(Events.ClientReady, async () => {
-  const canal = client.channels.cache.get(CANAL_CADASTRO_ID);
-
-  const embed = new EmbedBuilder()
-    .setTitle("📦 Sistema de Registro LAUREA")
-    .setDescription("Clique no botão abaixo para se registrar.")
-    .setColor("Green");
-
-  const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId("abrir_registro")
-      .setLabel("Fazer Registro")
-      .setStyle(ButtonStyle.Success)
-  );
-
-  await canal.send({ embeds: [embed], components: [row] });
 });
 
 client.login(TOKEN);
