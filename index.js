@@ -87,7 +87,7 @@ client.on(Events.InteractionCreate, async interaction => {
         const canal = guild.channels.cache.get(CANAL_REGISTRO_ID);
 
         const mensagem =
-`📋 **NOVO REGISTRO**
+`📋 **BENVENUTI A LAURÈA**
 
 \`\`\`yaml
 👤 NOME:        ${nome.toUpperCase()}
