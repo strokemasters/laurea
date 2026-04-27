@@ -48,7 +48,7 @@ client.once(Events.ClientReady, async () => {
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId("abrir_registro")
-      .setLabel("Realizar Registro")
+      .setLabel("Realizar Contrato")
       .setStyle(ButtonStyle.Success)
   );
 
