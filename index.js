@@ -26,20 +26,22 @@ client.once(Events.ClientReady, async () => {
   const canal = client.channels.cache.get(CANAL_CADASTRO_ID);
   if (!canal) return console.log("❌ Canal de cadastro não encontrado");
 
-  // 🔥 APAGA PAINEL ANTIGO
-  const mensagens = await canal.messages.fetch({ limit: 10 });
-  const antiga = mensagens.find(msg =>
-    msg.author.id === client.user.id &&
-    msg.components.length > 0
-  );
+  try {
+    const mensagens = await canal.messages.fetch({ limit: 10 });
+    const antiga = mensagens.find(msg =>
+      msg.author.id === client.user.id &&
+      msg.components.length > 0
+    );
 
-  if (antiga) {
-    await antiga.delete();
+    if (antiga) {
+      await antiga.delete();
+    }
+  } catch (e) {
+    console.log("Erro ao limpar painel:", e.message);
   }
 
-  // ✅ CRIA NOVO PAINEL
   const embed = new EmbedBuilder()
-    .setTitle("📝 Contratação - LAURÈA ")
+    .setTitle("📝 Contratação - LAURÈA")
     .setDescription("Informe seus dados logo abaixo para contratação.")
     .setColor("Green");
 
@@ -99,11 +101,23 @@ client.on(Events.InteractionCreate, async interaction => {
 
         const guild = interaction.guild;
         const member = interaction.member;
+        const usuario = interaction.user;
 
         const cargo = guild.roles.cache.get(CARGO_RECLUTA_ID);
-        if (cargo) await member.roles.add(cargo);
 
-        await member.setNickname(`#${id}・${nome.toUpperCase()}`);
+        if (cargo) {
+          try {
+            await member.roles.add(cargo);
+          } catch (e) {
+            console.log("Erro ao dar cargo:", e.message);
+          }
+        }
+
+        try {
+          await member.setNickname(`#${id}・${nome.toUpperCase()}`);
+        } catch (e) {
+          console.log("Erro ao mudar nick:", e.message);
+        }
 
         let tel = telefone.replace(/\D/g, "");
         if (tel.length >= 9) {
@@ -121,11 +135,13 @@ client.on(Events.InteractionCreate, async interaction => {
 📱 TELEFONE:    ${tel}
 🌑 DEEP:        ${deep}
 🏷️ VULGO:       ${vulgo}
-💬 DISCORD:     ${usuario.username}
+💬 DISCORD:     ${usuario.username} (${usuario.id})
 \`\`\``;
 
         if (canal) {
           await canal.send({ content: mensagem });
+        } else {
+          console.log("Canal de registro não encontrado");
         }
 
         await interaction.reply({
@@ -134,7 +150,7 @@ client.on(Events.InteractionCreate, async interaction => {
         });
 
       } catch (err) {
-        console.error(err);
+        console.error("Erro geral:", err);
 
         if (!interaction.replied) {
           await interaction.reply({
