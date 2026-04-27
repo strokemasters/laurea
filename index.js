@@ -39,7 +39,7 @@ client.once(Events.ClientReady, async () => {
 
   // ✅ CRIA NOVO PAINEL
   const embed = new EmbedBuilder()
-    .setTitle("📝 -CONTRATAÇÃO LAURÈA- ")
+    .setTitle("📝 Contratação - LAURÈA ")
     .setDescription("Informe seus dados logo abaixo para contratação.")
     .setColor("Green");
 
