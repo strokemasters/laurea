@@ -63,7 +63,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       const modal = new ModalBuilder()
         .setCustomId("modal_registro")
-        .setTitle("Registro");
+        .setTitle("Contratação - LAURÈA");
 
       const campos = [
         { id: "nome", label: "NOME COMPLETO" },
