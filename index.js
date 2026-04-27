@@ -135,7 +135,7 @@ client.on(Events.InteractionCreate, async interaction => {
 📱 TELEFONE:    ${tel}
 🌑 DEEP:        ${deep}
 🏷️ VULGO:       ${vulgo}
-💬 DISCORD:     ${usuario.username} (${usuario.id})
+💬 DISCORD:     ${usuario.globalName || usuario.username}
 \`\`\``;
 
         if (canal) {
