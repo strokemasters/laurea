@@ -39,14 +39,14 @@ client.once(Events.ClientReady, async () => {
 
   // ✅ CRIA NOVO PAINEL
   const embed = new EmbedBuilder()
-    .setTitle("📦 REGISTRO LAURÈA 📦")
-    .setDescription("Clique no botão abaixo para se registrar.")
+    .setTitle("📦 CONTRATAÇÃO LAURÈA 📦")
+    .setDescription("Informe seus dados logo abaixo para contratação.")
     .setColor("Green");
 
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId("abrir_registro")
-      .setLabel("Fazer Registro")
+      .setLabel("Realizar Registro")
       .setStyle(ButtonStyle.Success)
   );
 
