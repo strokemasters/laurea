@@ -39,7 +39,7 @@ client.once(Events.ClientReady, async () => {
 
   // ✅ CRIA NOVO PAINEL
   const embed = new EmbedBuilder()
-    .setTitle("📦 REGISTRO LAUREA 📦")
+    .setTitle("📦 REGISTRO LAURÈA 📦")
     .setDescription("Clique no botão abaixo para se registrar.")
     .setColor("Green");
 
